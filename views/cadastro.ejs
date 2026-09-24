@@ -1,47 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cadastro - Sportune</title>
+<meta charset="UTF-8">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cadastro - Sportune</title>
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
+
 </head>
 
 <body>
 
-    <div class="container mt-5">
+<div class="container mt-5">
 
-        <h1>Criar conta</h1>
+    <h1>Criar conta como <%= tipo %></h1>
 
-        <form>
+    <form>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Nome
+            </label>
+
+            <input type="text" class="form-control">
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Email
+            </label>
+
+            <input type="email" class="form-control">
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Senha
+            </label>
+
+            <input type="password" class="form-control">
+
+        </div>
+
+
+        <% if (tipo === 'atleta') { %>
 
             <div class="mb-3">
-                <label class="form-label">Nome</label>
+
+                <label class="form-label">
+                    Esporte
+                </label>
+
                 <input type="text" class="form-control">
+
             </div>
+
 
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control">
+
+                <label class="form-label">
+                    País
+                </label>
+
+                <input type="text" class="form-control">
+
             </div>
+
+        <% } else if (tipo === 'treinador') { %>
 
             <div class="mb-3">
-                <label class="form-label">Senha</label>
-                <input type="password" class="form-control">
+
+                <label class="form-label">
+                    Esporte
+                </label>
+
+                <input type="text" class="form-control">
+
             </div>
 
-            <button type="submit" class="btn btn-primary">
-                Criar conta
-            </button>
 
-        </form>
+            <div class="mb-3">
 
-    </div>
+                <label class="form-label">
+                    País
+                </label>
+
+                <input type="text" class="form-control">
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Experiência
+                </label>
+
+                <input type="text" class="form-control">
+
+            </div>
+
+        <% } %>
+
+
+        <button type="submit" class="btn btn-primary">
+            Criar conta
+        </button>
+
+    </form>
+
+</div>
 
 </body>
+
 </html>

@@ -7,7 +7,9 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/cadastro', (req, res) => {
-    res.render('cadastro');
+    const tipo = req.query.tipo;
+
+    res.render('cadastro', { tipo: tipo });
 });
 
 module.exports = router;
