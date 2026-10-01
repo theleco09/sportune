@@ -63,12 +63,32 @@ router.get('/cadastro', (req, res) => {
     if (tipo !== 'atleta' && tipo !== 'treinador') {
         return res.redirect('/jornada');
     }
-    res.render('cadastro', { tipo: tipo });
+    res.render('cadastro', {
+        tipo: tipo,
+        erro: null
+    });
 });
 
 router.post('/cadastro', (req, res) => {
     const { nome, email, senha, esporte, pais, experiencia, tipo } = req.body;
 
+    if (!nome || !email || !senha || !esporte || !pais) {
+        return res.render('cadastro', {
+            tipo: tipo,
+            erro: 'Preencha todos os campos obrigatórios.'
+        });
+    }
+
+    const emailExiste =
+    atletas.some(usuario => usuario.email === email) ||
+    treinadores.some(usuario => usuario.email === email);
+
+    if (emailExiste) {
+        return res.render('cadastro', {
+            tipo: tipo,
+            erro: 'Este email já está cadastrado.'
+        });
+    }
     if (tipo === 'atleta') {
         const novoAtleta = {
             id: atletas.length + 1,
