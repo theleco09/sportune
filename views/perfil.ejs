@@ -27,29 +27,35 @@
     Bem-vindo, <%= usuario.nome %>!
 </p>
 
-<p>
-    <strong>Tipo de usuário:</strong> <%= tipo %>
-</p>
+<div class="card mt-4">
+    <div class="card-body">
 
-<p>
-    <strong>Email:</strong> <%= usuario.email %>
-</p>
+        <p>
+            <strong>Tipo de usuário:</strong> <%= tipo %>
+        </p>
 
-<p>
-    <strong>Esporte:</strong> <%= usuario.esporte %>
-</p>
+        <p>
+            <strong>Email:</strong> <%= usuario.email %>
+        </p>
 
-<p>
-    <strong>País:</strong> <%= usuario.pais %>
-</p>
+        <p>
+            <strong>Esporte:</strong> <%= usuario.esporte %>
+        </p>
 
-<% if (tipo === 'treinador') { %>
+        <p>
+            <strong>País:</strong> <%= usuario.pais %>
+        </p>
 
-    <p>
-        <strong>Experiência:</strong> <%= usuario.experiencia %>
-    </p>
+        <% if (tipo === 'treinador') { %>
 
-<% } %>
+            <p>
+                <strong>Experiência:</strong> <%= usuario.experiencia %>
+            </p>
+
+        <% } %>
+
+    </div>
+</div>
     </div>
 
 </body>
