@@ -9,6 +9,9 @@ router.get('/login', (req, res) => {
 router.get('/cadastro', (req, res) => {
     const tipo = req.query.tipo;
 
+    if (tipo !== 'atleta' && tipo !== 'treinador') {
+        return res.redirect('/jornada');
+    }
     res.render('cadastro', { tipo: tipo });
 });
 
