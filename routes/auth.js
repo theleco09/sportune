@@ -28,6 +28,36 @@ router.get('/logout', (req, res) => {
 
 });
 
+router.get('/perfil/editar', (req, res) => {
+    const usuario = req.session.usuario;
+    const tipo = req.session.tipo;
+
+    res.render('editar-perfil', {
+        usuario: usuario,
+        tipo: tipo,
+        erro: null
+    });
+});
+router.post('/perfil/editar', (req, res) => {
+    const { nome, email, esporte, pais, experiencia } = req.body;
+
+    const usuario = req.session.usuario;
+    const tipo = req.session.tipo;
+
+    usuario.nome = nome;
+    usuario.email = email;
+    usuario.esporte = esporte;
+    usuario.pais = pais;
+
+    if (tipo === 'treinador') {
+        usuario.experiencia = experiencia;
+    }
+
+    req.session.usuario = usuario;
+
+    res.redirect('/perfil');
+});
+
 router.post('/login', (req, res) => {
 
     const { email, senha } = req.body;
