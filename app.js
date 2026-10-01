@@ -4,6 +4,8 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
+app.use(express.urlencoded({ extended: true }));
+
 const PORT = 3333;
 
 const indexRouter = require('./routes/index');

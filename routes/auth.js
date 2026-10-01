@@ -15,4 +15,10 @@ router.get('/cadastro', (req, res) => {
     res.render('cadastro', { tipo: tipo });
 });
 
+router.post('/cadastro', (req, res) => {
+    console.log(req.body);
+
+    res.send('Cadastro concluido!');
+});
+
 module.exports = router;
