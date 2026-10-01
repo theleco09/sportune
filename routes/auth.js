@@ -8,6 +8,48 @@ router.get('/login', (req, res) => {
     res.render('login');
 });
 
+router.get('/perfil', (req, res) => {
+
+    const usuario = req.session.usuario;
+    const tipo = req.session.tipo;
+
+    res.render('perfil', {
+        usuario: usuario,
+        tipo: tipo
+    });
+
+});
+
+
+router.post('/login', (req, res) => {
+
+    const { email, senha } = req.body;
+
+    const atleta = atletas.find(usuario =>
+        usuario.email === email && usuario.senha === senha
+    );
+
+    const treinador = treinadores.find(usuario =>
+        usuario.email === email && usuario.senha === senha
+    );
+
+    if (atleta) {
+        req.session.usuario = atleta;
+        req.session.tipo = 'atleta';
+    
+        return res.redirect('/perfil');
+    }
+    
+    if (treinador) {
+        req.session.usuario = treinador;
+        req.session.tipo = 'treinador';
+    
+        return res.redirect('/perfil');
+    }
+
+    res.send('Email ou senha incorretos.');
+});
+
 router.get('/cadastro', (req, res) => {
     const tipo = req.query.tipo;
 
