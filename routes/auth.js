@@ -20,6 +20,13 @@ router.get('/perfil', (req, res) => {
 
 });
 
+router.get('/logout', (req, res) => {
+
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+
+});
 
 router.post('/login', (req, res) => {
 
