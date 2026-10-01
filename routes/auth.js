@@ -5,7 +5,9 @@ const treinadores = require('../data/treinadores');
 const router = express.Router();
 
 router.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', {
+        erro: null
+    });
 });
 
 router.get('/perfil', (req, res) => {
@@ -84,7 +86,9 @@ router.post('/login', (req, res) => {
         return res.redirect('/perfil');
     }
 
-    res.send('Email ou senha incorretos.');
+    res.render('login', {
+        erro: 'Email ou senha incorretos.'
+    });
 });
 
 router.get('/cadastro', (req, res) => {
