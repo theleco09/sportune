@@ -8,8 +8,13 @@ app.use(session({
     saveUninitialized: false
 }));
 app.set('view engine', 'ejs');
-
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+    res.locals.usuario = req.session.usuario;
+    res.locals.tipo = req.session.tipo;
+
+    next();
+});
 
 const PORT = 3333;
 

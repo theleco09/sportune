@@ -36,9 +36,13 @@
         e por dentro do mundo esportivo.
     </p>
 
-    <a href="/jornada" class="btn btn-primary btn-lg mt-3">
-        Comece sua jornada
-    </a>
+    <% if (!usuario) { %>
+
+        <a href="/jornada" class="btn btn-primary btn-lg mt-3">
+            Comece sua jornada
+        </a>
+    
+    <% } %>
     <div class="row justify-content-center mt-5">
 
         <div class="col-md-4 mb-4">
