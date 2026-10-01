@@ -1,4 +1,6 @@
 const express = require('express');
+const atletas = require('../data/atletas');
+const treinadores = require('../data/treinadores');
 
 const router = express.Router();
 
@@ -16,9 +18,32 @@ router.get('/cadastro', (req, res) => {
 });
 
 router.post('/cadastro', (req, res) => {
-    console.log(req.body);
+    const { nome, email, senha, esporte, pais, experiencia, tipo } = req.body;
 
-    res.send('Cadastro concluido!');
+    if (tipo === 'atleta') {
+        const novoAtleta = {
+            id: atletas.length + 1,
+            nome: nome,
+            esporte: esporte,
+            pais: pais
+        };
+
+        atletas.push(novoAtleta);
+
+        res.redirect('/atletas');
+    } else {
+        const novoTreinador = {
+            id: treinadores.length + 1,
+            nome: nome,
+            esporte: esporte,
+            pais: pais,
+            experiencia: experiencia
+        };
+
+        treinadores.push(novoTreinador);
+
+        res.redirect('/treinadores');
+    }
 });
 
 module.exports = router;

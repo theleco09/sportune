@@ -24,6 +24,8 @@
     <h1>Criar conta como <%= tipo %></h1>
 
     <form action="/cadastro" method="POST">
+        
+        <input type="hidden" name="tipo" value="<%= tipo %>">
 
         <div class="mb-3">
 
