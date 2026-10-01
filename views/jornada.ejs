@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Comece sua jornada - Sportune</title>
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
+</head>
+
+<body>
+
+<%- include('partials/navbar') %>
+
+<div class="container text-center mt-5">
+
+    <h1>Comece sua jornada</h1>
+
+    <p class="lead mt-3">
+        Como você quer participar do Sportune?
+    </p>
+
+    <div class="row justify-content-center mt-5">
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+
+                    <h2 class="card-title">
+                        Atleta
+                    </h2>
+
+                    <p class="card-text mt-3">
+                        Crie seu perfil, mostre seu esporte
+                        e conecte-se com treinadores.
+                    </p>
+
+                    <a href="/cadastro?tipo=atleta" class="btn btn-primary">
+                        Sou atleta
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-body">
+
+                    <h2 class="card-title">
+                        Treinador
+                    </h2>
+
+                    <p class="card-text mt-3">
+                        Crie seu perfil, encontre atletas
+                        e compartilhe sua experiência.
+                    </p>
+
+                    <a href="/cadastro?tipo=treinador" class="btn btn-primary">
+                        Sou treinador
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>
