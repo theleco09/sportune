@@ -24,10 +24,12 @@ router.post('/cadastro', (req, res) => {
         const novoAtleta = {
             id: atletas.length + 1,
             nome: nome,
+            email: email,
+            senha: senha,
             esporte: esporte,
             pais: pais
         };
-
+        console.log('NOVO ATLETA:', novoAtleta);
         atletas.push(novoAtleta);
 
         res.redirect('/atletas');
@@ -35,11 +37,13 @@ router.post('/cadastro', (req, res) => {
         const novoTreinador = {
             id: treinadores.length + 1,
             nome: nome,
+            email: email,
+            senha: senha,
             esporte: esporte,
             pais: pais,
             experiencia: experiencia
         };
-
+        console.log('NOVO TREINADOR:', novoTreinador);
         treinadores.push(novoTreinador);
 
         res.redirect('/treinadores');
