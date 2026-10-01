@@ -4,13 +4,20 @@ const treinadores = require('../data/treinadores');
 
 const router = express.Router();
 
+function verificarLogin(req, res, next) {
+    if (!req.session.usuario) {
+        return res.redirect('/login');
+    }
+
+    next();
+}
 router.get('/login', (req, res) => {
     res.render('login', {
         erro: null
     });
 });
 
-router.get('/perfil', (req, res) => {
+router.get('/perfil', verificarLogin, (req, res) => {
 
     const usuario = req.session.usuario;
     const tipo = req.session.tipo;
@@ -30,7 +37,7 @@ router.get('/logout', (req, res) => {
 
 });
 
-router.get('/perfil/editar', (req, res) => {
+router.get('/perfil/editar', verificarLogin, (req, res) => {
     const usuario = req.session.usuario;
     const tipo = req.session.tipo;
 
@@ -40,7 +47,7 @@ router.get('/perfil/editar', (req, res) => {
         erro: null
     });
 });
-router.post('/perfil/editar', (req, res) => {
+router.post('/perfil/editar', verificarLogin, (req, res) => {
     const { nome, email, esporte, pais, experiencia } = req.body;
 
     const usuario = req.session.usuario;
