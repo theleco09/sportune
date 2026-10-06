@@ -1,0 +1,51 @@
+body {
+    background-color: #f5f7fa;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-weight: 700;
+}
+
+.container {
+    max-width: 1100px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn {
+    border-radius: 8px;
+}
+.navbar {
+    background-color: #111827 !important;
+}
+
+.navbar-brand {
+    color: #3b82f6 !important;
+    font-weight: 700;
+}
+
+.navbar-brand:hover {
+    color: #60a5fa !important;
+}
+
+.nav-link {
+    color: #d1d5db !important;
+    transition: 0.2s;
+}
+
+.nav-link:hover {
+    color: #3b82f6 !important;
+}
+.formulario {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
