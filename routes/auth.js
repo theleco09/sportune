@@ -1,101 +1,207 @@
+require('dotenv').config();
+
 const express = require('express');
-const atletas = require('../data/atletas');
-const treinadores = require('../data/treinadores');
+const { createClient } = require('@supabase/supabase-js');
 
 const router = express.Router();
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+
+const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+    }
+});
+
+// Cliente para consultar dados respeitando o usuário autenticado.
+function criarClienteUsuario(accessToken) {
+    return createClient(supabaseUrl, supabaseKey, {
+        global: {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        },
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+        }
+    });
+}
+
 function verificarLogin(req, res, next) {
-    if (!req.session.usuario) {
+    if (!req.session.usuario || !req.session.accessToken) {
         return res.redirect('/login');
     }
 
     next();
 }
-router.get('/login', (req, res) => {
-    res.render('login', {
-        erro: null
-    });
-});
 
-router.get('/perfil', verificarLogin, (req, res) => {
-
-    const usuario = req.session.usuario;
-    const tipo = req.session.tipo;
-
-    res.render('perfil', {
-        usuario: usuario,
-        tipo: tipo
-    });
-
-});
-
-router.get('/logout', (req, res) => {
-
+function encerrarSessao(req, res) {
     req.session.destroy(() => {
         res.redirect('/');
     });
+}
 
+function mostrarCadastro(res, tipo, erro) {
+    return res.render('cadastro', { tipo, erro });
+}
+
+router.get('/login', (req, res) => {
+    res.render('login', { erro: null });
+});
+
+router.get('/perfil', verificarLogin, (req, res) => {
+    res.render('perfil', {
+        usuario: req.session.usuario,
+        tipo: req.session.tipo
+    });
+});
+
+router.get('/logout', (req, res) => {
+    encerrarSessao(req, res);
 });
 
 router.get('/perfil/editar', verificarLogin, (req, res) => {
-    const usuario = req.session.usuario;
-    const tipo = req.session.tipo;
-
     res.render('editar-perfil', {
-        usuario: usuario,
-        tipo: tipo,
+        usuario: req.session.usuario,
+        tipo: req.session.tipo,
         erro: null
     });
 });
-router.post('/perfil/editar', verificarLogin, (req, res) => {
-    const { nome, email, esporte, pais, experiencia } = req.body;
 
+router.post('/perfil/editar', verificarLogin, async (req, res) => {
+    const { nome, esporte, pais, experiencia } = req.body;
     const usuario = req.session.usuario;
     const tipo = req.session.tipo;
+    const clienteUsuario = criarClienteUsuario(req.session.accessToken);
 
-    usuario.nome = nome;
-    usuario.email = email;
-    usuario.esporte = esporte;
-    usuario.pais = pais;
-
-    if (tipo === 'treinador') {
-        usuario.experiencia = experiencia;
+    if (!nome || !esporte || !pais ||
+        (tipo === 'treinador' && !experiencia)) {
+        return res.render('editar-perfil', {
+            usuario,
+            tipo,
+            erro: 'Preencha todos os campos obrigatórios.'
+        });
     }
 
-    req.session.usuario = usuario;
+    try {
+        const { error: erroUsuario } = await clienteUsuario
+            .from('usuarios')
+            .update({ nome, pais })
+            .eq('id', usuario.id);
 
-    res.redirect('/perfil');
+        if (erroUsuario) throw erroUsuario;
+
+        const tabelaPerfil = tipo === 'atleta'
+            ? 'atletas'
+            : 'treinadores';
+
+        const dadosPerfil = tipo === 'atleta'
+            ? { esporte }
+            : { esporte, experiencia };
+
+        const { error: erroPerfil } = await clienteUsuario
+            .from(tabelaPerfil)
+            .update(dadosPerfil)
+            .eq('usuario_id', usuario.id);
+
+        if (erroPerfil) throw erroPerfil;
+
+        req.session.usuario = {
+            ...usuario,
+            nome,
+            pais,
+            esporte,
+            ...(tipo === 'treinador' ? { experiencia } : {})
+        };
+
+        res.redirect('/perfil');
+    } catch (error) {
+        console.error('Erro ao editar perfil:', error.message);
+
+        res.render('editar-perfil', {
+            usuario,
+            tipo,
+            erro: 'Não foi possível atualizar o perfil.'
+        });
+    }
 });
 
-router.post('/login', (req, res) => {
-
+router.post('/login', async (req, res) => {
     const { email, senha } = req.body;
 
-    const atleta = atletas.find(usuario =>
-        usuario.email === email && usuario.senha === senha
-    );
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password: senha
+        });
 
-    const treinador = treinadores.find(usuario =>
-        usuario.email === email && usuario.senha === senha
-    );
+        if (error || !data.session) {
+            return res.render('login', {
+                erro: 'Email ou senha incorretos.'
+            });
+        }
 
-    if (atleta) {
-        req.session.usuario = atleta;
-        req.session.tipo = 'atleta';
-    
-        return res.redirect('/perfil');
+        const clienteUsuario = criarClienteUsuario(
+            data.session.access_token
+        );
+
+        const { data: perfil, error: erroPerfil } = await clienteUsuario
+            .from('usuarios')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+
+        if (erroPerfil || !perfil) {
+            return res.render('login', {
+                erro: 'Não foi possível carregar seu perfil.'
+            });
+        }
+
+        const tabelaPerfil = perfil.tipo === 'atleta'
+            ? 'atletas'
+            : 'treinadores';
+
+        const { data: detalhes, error: erroDetalhes } =
+            await clienteUsuario
+                .from(tabelaPerfil)
+                .select('*')
+                .eq('usuario_id', data.user.id)
+                .single();
+
+        if (erroDetalhes || !detalhes) {
+            return res.render('login', {
+                erro: 'Não foi possível carregar os dados do perfil.'
+            });
+        }
+
+        req.session.usuario = {
+            id: perfil.id,
+            nome: perfil.nome,
+            email: data.user.email,
+            pais: perfil.pais,
+            esporte: detalhes.esporte,
+            ...(perfil.tipo === 'treinador'
+                ? { experiencia: detalhes.experiencia }
+                : {})
+        };
+
+        req.session.tipo = perfil.tipo;
+        req.session.accessToken = data.session.access_token;
+        req.session.refreshToken = data.session.refresh_token;
+
+        res.redirect('/perfil');
+    } catch (error) {
+        console.error('Erro no login:', error.message);
+
+        res.render('login', {
+            erro: 'Ocorreu um erro ao entrar. Tente novamente.'
+        });
     }
-    
-    if (treinador) {
-        req.session.usuario = treinador;
-        req.session.tipo = 'treinador';
-    
-        return res.redirect('/perfil');
-    }
-
-    res.render('login', {
-        erro: 'Email ou senha incorretos.'
-    });
 });
 
 router.get('/cadastro', (req, res) => {
@@ -104,59 +210,155 @@ router.get('/cadastro', (req, res) => {
     if (tipo !== 'atleta' && tipo !== 'treinador') {
         return res.redirect('/jornada');
     }
-    res.render('cadastro', {
-        tipo: tipo,
-        erro: null
-    });
+
+    res.render('cadastro', { tipo, erro: null });
 });
 
-router.post('/cadastro', (req, res) => {
-    const { nome, email, senha, esporte, pais, experiencia, tipo } = req.body;
+router.post('/cadastro', async (req, res) => {
+    const {
+        nome,
+        email,
+        senha,
+        esporte,
+        pais,
+        experiencia,
+        tipo
+    } = req.body;
 
-    if (!nome || !email || !senha || !esporte || !pais) {
-        return res.render('cadastro', {
-            tipo: tipo,
-            erro: 'Preencha todos os campos obrigatórios.'
-        });
+    if (tipo !== 'atleta' && tipo !== 'treinador') {
+        return res.redirect('/jornada');
     }
 
-    const emailExiste =
-    atletas.some(usuario => usuario.email === email) ||
-    treinadores.some(usuario => usuario.email === email);
-
-    if (emailExiste) {
-        return res.render('cadastro', {
-            tipo: tipo,
-            erro: 'Este email já está cadastrado.'
-        });
+    if (
+        !nome?.trim() ||
+        !email?.trim() ||
+        !senha ||
+        !esporte?.trim() ||
+        !pais?.trim() ||
+        (tipo === 'treinador' && !experiencia?.trim())
+    ) {
+        return mostrarCadastro(
+            res,
+            tipo,
+            'Preencha todos os campos obrigatórios.'
+        );
     }
-    if (tipo === 'atleta') {
-        const novoAtleta = {
-            id: atletas.length + 1,
-            nome: nome,
-            email: email,
-            senha: senha,
-            esporte: esporte,
-            pais: pais
-        };
-        console.log('NOVO ATLETA:', novoAtleta);
-        atletas.push(novoAtleta);
 
-        res.redirect('/atletas');
-    } else {
-        const novoTreinador = {
-            id: treinadores.length + 1,
-            nome: nome,
-            email: email,
-            senha: senha,
-            esporte: esporte,
-            pais: pais,
-            experiencia: experiencia
-        };
-        console.log('NOVO TREINADOR:', novoTreinador);
-        treinadores.push(novoTreinador);
+    if (senha.length < 6) {
+        return mostrarCadastro(
+            res,
+            tipo,
+            'A senha deve ter pelo menos 6 caracteres.'
+        );
+    }
 
-        res.redirect('/treinadores');
+    try {
+        const { data, error } = await supabase.auth.signUp({
+            email: email.trim(),
+            password: senha,
+            options: {
+                data: {
+                    nome: nome.trim(),
+                    tipo,
+                    pais: pais.trim(),
+                    esporte: esporte.trim(),
+                    ...(tipo === 'treinador'
+                        ? { experiencia: experiencia.trim() }
+                        : {})
+                }
+            }
+        });
+
+        if (error) {
+            console.error('Erro no cadastro:', error.message);
+
+            return mostrarCadastro(
+                res,
+                tipo,
+                'Não foi possível criar a conta. Verifique os dados e tente novamente.'
+            );
+        }
+
+        // Sem sessão, o Supabase ainda exige uma etapa de confirmação.
+        if (!data.session) {
+            return mostrarCadastro(
+                res,
+                tipo,
+                'Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar.'
+            );
+        }
+
+        const clienteUsuario = criarClienteUsuario(
+            data.session.access_token
+        );
+
+        const { data: perfil, error: erroPerfil } = await clienteUsuario
+            .from('usuarios')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+
+        if (erroPerfil || !perfil) {
+            console.error(
+                'Conta criada, mas o perfil não foi carregado:',
+                erroPerfil?.message
+            );
+
+            return mostrarCadastro(
+                res,
+                tipo,
+                'A conta foi criada, mas houve um problema ao carregar o perfil. Tente entrar pela página de login.'
+            );
+        }
+
+        const tabelaPerfil = tipo === 'atleta'
+            ? 'atletas'
+            : 'treinadores';
+
+        const { data: detalhes, error: erroDetalhes } =
+            await clienteUsuario
+                .from(tabelaPerfil)
+                .select('*')
+                .eq('usuario_id', data.user.id)
+                .single();
+
+        if (erroDetalhes || !detalhes) {
+            console.error(
+                'Erro ao carregar os detalhes:',
+                erroDetalhes?.message
+            );
+
+            return mostrarCadastro(
+                res,
+                tipo,
+                'A conta foi criada, mas não foi possível carregar os dados do perfil. Tente entrar pela página de login.'
+            );
+        }
+
+        req.session.usuario = {
+            id: perfil.id,
+            nome: perfil.nome,
+            email: data.user.email,
+            pais: perfil.pais,
+            esporte: detalhes.esporte,
+            ...(tipo === 'treinador'
+                ? { experiencia: detalhes.experiencia }
+                : {})
+        };
+
+        req.session.tipo = tipo;
+        req.session.accessToken = data.session.access_token;
+        req.session.refreshToken = data.session.refresh_token;
+
+        res.redirect('/perfil');
+    } catch (error) {
+        console.error('Erro inesperado no cadastro:', error.message);
+
+        mostrarCadastro(
+            res,
+            tipo,
+            'Ocorreu um erro inesperado. Tente novamente.'
+        );
     }
 });
 
