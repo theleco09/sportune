@@ -23,10 +23,12 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const atletasRouter = require('./routes/atletas');
 const treinadoresRouter = require('./routes/treinadores');
+const feedRouter = require('./routes/feed');
 app.use('/', indexRouter);
 app.use('/', authRouter);
 app.use('/', atletasRouter);
 app.use('/', treinadoresRouter);
+app.use('/', feedRouter);
 
 
 app.listen(PORT, () => {
