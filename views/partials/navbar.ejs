@@ -1,45 +1,56 @@
-<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
 
         <a class="navbar-brand" href="/">
             Sportune
         </a>
 
-        <div class="navbar-nav">
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menuSportune"
+            aria-controls="menuSportune"
+            aria-expanded="false"
+            aria-label="Abrir menu"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <a class="nav-link" href="/">
-                Home
-            </a>
+        <div class="collapse navbar-collapse" id="menuSportune">
 
-            <a class="nav-link" href="/atletas">
-                Atletas
-            </a>
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/feed">Feed</a>
+                <a class="nav-link" href="/atletas">Atletas</a>
+                <a class="nav-link" href="/treinadores">Treinadores</a>
+            </div>
 
-            <a class="nav-link" href="/treinadores">
-                Treinadores
-            </a>
-            <% if (usuario) { %>
+            <div class="navbar-nav">
+                <% if (usuario) { %>
 
-                <a class="nav-link" href="/perfil">
-                    Perfil
-                </a>
-            
-                <a class="nav-link" href="/logout">
-                    Sair
-                </a>
-            
-            <% } else { %>
-            
-                <a class="nav-link" href="/cadastro">
-                    Cadastro
-                </a>
-            
-                <a class="nav-link" href="/login">
-                    Login
-                </a>
-            
-            <% } %>
+                    <a class="nav-link" href="/perfil">
+                        Perfil
+                    </a>
+
+                    <a class="nav-link" href="/logout">
+                        Sair
+                    </a>
+
+                <% } else { %>
+
+                    <a class="nav-link" href="/cadastro">
+                        Cadastro
+                    </a>
+
+                    <a class="nav-link" href="/login">
+                        Login
+                    </a>
+
+                <% } %>
+            </div>
+
         </div>
-
     </div>
 </nav>
