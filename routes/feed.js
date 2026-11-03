@@ -24,26 +24,51 @@ function criarClienteUsuario(accessToken) {
     );
 }
 
+
 router.get('/feed', async (req, res) => {
     try {
         const { data: publicacoes, error } = await supabase
             .from('publicacoes')
-            .select(`
-                id,
-                usuario_id,
-                conteudo,
-                criado_em,
-                usuarios ( nome )
-            `)
+            .select('id, usuario_id, conteudo, criado_em')
             .order('criado_em', { ascending: false });
 
         if (error) throw error;
 
+        const idsAutores = [
+            ...new Set(publicacoes.map(p => p.usuario_id))
+        ];
+
+        let nomesAutores = [];
+
+        if (idsAutores.length > 0) {
+            const { data, error: erroAutores } = await supabase
+                .rpc('buscar_nomes_autores', {
+                    p_ids: idsAutores
+                });
+
+            if (erroAutores) throw erroAutores;
+
+            nomesAutores = data;
+        }
+        const publicacoesComAutores = publicacoes.map(publicacao => {
+            const autor = nomesAutores.find(
+                usuario => usuario.id === publicacao.usuario_id
+            );
+
+            return {
+                ...publicacao,
+                usuarios: {
+                    nome: autor?.nome || 'Usuário'
+                }
+            };
+        });
+
         res.render('feed', {
-            publicacoes,
+            publicacoes: publicacoesComAutores,
             erro: null,
             sucesso: null
         });
+
     } catch (error) {
         console.error('Erro ao buscar publicações:', error.message);
 
