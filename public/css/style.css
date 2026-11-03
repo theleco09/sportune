@@ -175,3 +175,120 @@ h1, h2, h3, h4, h5 {
     color: var(--texto-secundario);
     text-align: center;
 }
+.feed-intro {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--borda);
+    margin-bottom: 28px;
+}
+
+.feed-intro h1 {
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+}
+
+.feed-intro p {
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+.feed-form {
+    border: 1px solid #334766;
+    background: linear-gradient(
+        145deg,
+        #152238,
+        #111827
+    );
+    overflow: hidden;
+}
+
+.feed-form .card-body {
+    padding: 22px !important;
+}
+
+.feed-form label {
+    color: var(--texto);
+    font-size: 0.95rem;
+}
+
+.feed-form textarea {
+    resize: vertical;
+    min-height: 95px;
+    line-height: 1.5;
+}
+
+.feed-form textarea:focus {
+    border-color: var(--azul);
+}
+.feed-form .btn-primary {
+    padding: 9px 22px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.feed-form .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+.feed-post {
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(
+        145deg,
+        #141f31,
+        #111827
+    );
+}
+
+.feed-post .card-body {
+    padding: 22px !important;
+}
+
+.feed-post:hover {
+    border-color: var(--azul);
+}
+.feed-avatar {
+    width: 46px;
+    height: 46px;
+    font-size: 1.1rem;
+    border: 2px solid #355782;
+    background: linear-gradient(
+        145deg,
+        #1e40af,
+        #1e3a5f
+    );
+}
+.feed-author {
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+.feed-content {
+    font-size: 0.96rem;
+    color: #e2e8f0;
+    padding-top: 8px;
+}
+.feed-meta {
+    letter-spacing: 0.1px;
+}
+.feed-empty {
+    background-color: var(--superficie);
+    padding: 38px 20px;
+    border-radius: 16px;
+}
+
+.feed-empty p {
+    color: var(--texto);
+    font-weight: 600;
+}
+@media (max-width: 576px) {
+    .feed-intro h1 {
+        font-size: 1.5rem;
+    }
+
+    .feed-form .card-body,
+    .feed-post .card-body {
+        padding: 16px !important;
+    }
+
+    .feed-container {
+        width: 100%;
+    }
+}
+
