@@ -16,7 +16,6 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
     }
 });
 
-// Cliente para consultar dados respeitando o usuário autenticado.
 function criarClienteUsuario(accessToken) {
     return createClient(supabaseUrl, supabaseKey, {
         global: {
@@ -74,7 +73,7 @@ router.get('/perfil/editar', verificarLogin, (req, res) => {
 });
 
 router.post('/perfil/editar', verificarLogin, async (req, res) => {
-    const { nome, esporte, pais, experiencia } = req.body;
+    const { nome, esporte, pais, experiencia, bio } = req.body;
     const usuario = req.session.usuario;
     const tipo = req.session.tipo;
     const clienteUsuario = criarClienteUsuario(req.session.accessToken);
@@ -91,7 +90,7 @@ router.post('/perfil/editar', verificarLogin, async (req, res) => {
     try {
         const { error: erroUsuario } = await clienteUsuario
             .from('usuarios')
-            .update({ nome, pais })
+            .update({ nome, pais, bio })
             .eq('id', usuario.id);
 
         if (erroUsuario) throw erroUsuario;
@@ -115,6 +114,7 @@ router.post('/perfil/editar', verificarLogin, async (req, res) => {
             ...usuario,
             nome,
             pais,
+            bio,
             esporte,
             ...(tipo === 'treinador' ? { experiencia } : {})
         };
@@ -278,8 +278,6 @@ router.post('/cadastro', async (req, res) => {
                 'Não foi possível criar a conta. Verifique os dados e tente novamente.'
             );
         }
-
-        // Sem sessão, o Supabase ainda exige uma etapa de confirmação.
         if (!data.session) {
             return mostrarCadastro(
                 res,

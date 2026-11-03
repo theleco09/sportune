@@ -291,4 +291,115 @@ h1, h2, h3, h4, h5 {
         width: 100%;
     }
 }
+/* ========================================
+   PERFIS SPORTUNE
+======================================== */
 
+.perfil-container {
+    max-width: 900px;
+    margin: 45px auto;
+}
+
+.perfil-header {
+    padding: 35px;
+    background: linear-gradient(145deg, #172943, #111827);
+    border: 1px solid var(--borda);
+    border-radius: 18px;
+    margin-bottom: 24px;
+}
+
+.perfil-identificacao {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.perfil-avatar {
+    width: 85px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2563eb, #1e3a5f);
+    border: 3px solid #60a5fa;
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.perfil-nome {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.perfil-subtitulo {
+    color: var(--texto-secundario);
+    margin: 0;
+}
+
+.perfil-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.perfil-tag {
+    padding: 7px 13px;
+    border-radius: 20px;
+    background-color: #1e3a5f;
+    color: #bfdbfe;
+    font-size: 0.85rem;
+}
+
+.perfil-secao {
+    padding: 25px;
+    margin-bottom: 20px;
+    background-color: var(--superficie);
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+}
+
+.perfil-secao h2 {
+    font-size: 1.2rem;
+    margin-bottom: 18px;
+}
+
+.perfil-bio {
+    color: #cbd5e1;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.perfil-vazio {
+    color: var(--texto-secundario);
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+@media (max-width: 576px) {
+    .perfil-container {
+        margin-top: 25px;
+    }
+
+    .perfil-header {
+        padding: 22px;
+    }
+
+    .perfil-avatar {
+        width: 65px;
+        height: 65px;
+        font-size: 1.5rem;
+    }
+
+    .perfil-nome {
+        font-size: 1.5rem;
+    }
+
+    .perfil-secao {
+        padding: 20px;
+    }
+}

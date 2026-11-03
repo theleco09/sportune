@@ -40,12 +40,28 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Sobre mim</label>
+                <textarea
+                    name="bio"
+                    class="form-control"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Conte um pouco sobre sua trajetória esportiva..."
+                ><%= usuario.bio || '' %></textarea>
+                <small class="text-muted">
+                    Apresente sua trajetória, objetivos e experiências.
+                    Máximo de 500 caracteres.
+                </small>
+            </div>
+
+            <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input
                     type="email"
                     name="email"
                     class="form-control"
                     value="<%= usuario.email %>"
+                    readonly
                 >
             </div>
 

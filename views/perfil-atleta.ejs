@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,31 +18,83 @@
 
     <%- include('partials/navbar') %>
 
-    <div class="container mt-5">
+    <main class="container perfil-container">
 
-        <h1>
-            <%= atleta.nome %>
-        </h1>
+        <!-- Cabeçalho do perfil -->
+        <section class="perfil-header">
 
-        <div class="card mt-4">
-            <div class="card-body">
+            <div class="perfil-identificacao">
 
-                <h5 class="card-title">
-                    Perfil do atleta
-                </h5>
+                <div class="perfil-avatar">
+                    <%= atleta.nome.charAt(0).toUpperCase() %>
+                </div>
 
-                <p class="card-text">
-                    Esporte: <%= atleta.esporte %>
-                </p>
+                <div>
+                    <h1 class="perfil-nome">
+                        <%= atleta.nome %>
+                    </h1>
 
-                <p class="card-text">
-                    País: <%= atleta.pais %>
-                </p>
+                    <p class="perfil-subtitulo">
+                        Atleta Sportune
+                    </p>
+                </div>
 
             </div>
-        </div>
 
-    </div>
+            <div class="perfil-tags">
+                <span class="perfil-tag">
+                    <%= atleta.esporte %>
+                </span>
+
+                <span class="perfil-tag">
+                    <%= atleta.pais %>
+                </span>
+            </div>
+
+        </section>
+
+        <!-- Biografia -->
+        <section class="perfil-secao">
+
+            <h2>Sobre mim</h2>
+
+            <% if (atleta.bio) { %>
+
+                <p class="perfil-bio"><%= atleta.bio %></p>
+
+            <% } else { %>
+
+                <p class="perfil-vazio">
+                    Este atleta ainda não adicionou uma biografia.
+                </p>
+
+            <% } %>
+
+        </section>
+
+        <!-- Experiências -->
+        <section class="perfil-secao">
+
+            <h2>Experiência esportiva</h2>
+
+            <p class="perfil-vazio">
+                As experiências esportivas deste atleta aparecerão aqui.
+            </p>
+
+        </section>
+
+        <!-- Conquistas -->
+        <section class="perfil-secao">
+
+            <h2>Conquistas</h2>
+
+            <p class="perfil-vazio">
+                As conquistas deste atleta aparecerão aqui.
+            </p>
+
+        </section>
+
+    </main>
 
 </body>
 </html>

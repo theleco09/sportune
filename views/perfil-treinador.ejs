@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,31 +18,104 @@
 
     <%- include('partials/navbar') %>
 
-    <div class="container mt-5">
+    <main class="container perfil-container">
 
-        <h1>
-            <%= treinador.nome %>
-        </h1>
+        <!-- Cabeçalho do perfil -->
+        <section class="perfil-header">
 
-        <div class="card mt-4">
-            <div class="card-body">
+            <div class="perfil-identificacao">
 
-                <h5 class="card-title">
-                    Perfil do treinador
-                </h5>
+                <div class="perfil-avatar">
+                    <%= treinador.nome.charAt(0).toUpperCase() %>
+                </div>
 
-                <p class="card-text">
-                    Esporte: <%= treinador.esporte %>
-                </p>
+                <div>
+                    <h1 class="perfil-nome">
+                        <%= treinador.nome %>
+                    </h1>
 
-                <p class="card-text">
-                    País: <%= treinador.pais %>
-                </p>
+                    <p class="perfil-subtitulo">
+                        Treinador Sportune
+                    </p>
+                </div>
 
             </div>
-        </div>
 
-    </div>
+            <div class="perfil-tags">
+
+                <span class="perfil-tag">
+                    <%= treinador.esporte %>
+                </span>
+
+                <span class="perfil-tag">
+                    <%= treinador.pais %>
+                </span>
+
+            </div>
+
+        </section>
+
+        <!-- Biografia -->
+        <section class="perfil-secao">
+
+            <h2>Sobre mim</h2>
+
+            <% if (treinador.bio) { %>
+
+                <p class="perfil-bio"><%= treinador.bio %></p>
+
+            <% } else { %>
+
+                <p class="perfil-vazio">
+                    Este treinador ainda não adicionou uma biografia.
+                </p>
+
+            <% } %>
+
+        </section>
+
+        <!-- Experiência profissional -->
+        <section class="perfil-secao">
+
+            <h2>Experiência profissional</h2>
+
+            <% if (treinador.experiencia) { %>
+
+                <p class="perfil-bio"><%= treinador.experiencia %></p>
+
+            <% } else { %>
+
+                <p class="perfil-vazio">
+                    Este treinador ainda não informou sua experiência profissional.
+                </p>
+
+            <% } %>
+
+        </section>
+
+        <!-- Histórico profissional -->
+        <section class="perfil-secao">
+
+            <h2>Histórico profissional</h2>
+
+            <p class="perfil-vazio">
+                As experiências profissionais deste treinador aparecerão aqui.
+            </p>
+
+        </section>
+
+        <!-- Conquistas -->
+        <section class="perfil-secao">
+
+            <h2>Conquistas</h2>
+
+            <p class="perfil-vazio">
+                As conquistas deste treinador aparecerão aqui.
+            </p>
+
+        </section>
+
+    </main>
 
 </body>
 </html>
