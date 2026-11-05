@@ -33,7 +33,22 @@ router.get('/feed', async (req, res) => {
             .order('criado_em', { ascending: false });
 
         if (error) throw error;
+        const idsPublicacoes = publicacoes.map(p => p.id);
 
+        let curtidas = [];
+        
+        if (idsPublicacoes.length > 0) {
+            const { data, error: erroCurtidas } = await supabase
+                .from('curtidas')
+                .select('publicacao_id, usuario_id')
+                .in('publicacao_id', idsPublicacoes);
+        
+            if (erroCurtidas) throw erroCurtidas;
+        
+            curtidas = data;
+        }
+        
+        const usuarioId = req.session.usuario?.id || null;
         const idsAutores = [
             ...new Set(publicacoes.map(p => p.usuario_id))
         ];
@@ -54,12 +69,20 @@ router.get('/feed', async (req, res) => {
             const autor = nomesAutores.find(
                 usuario => usuario.id === publicacao.usuario_id
             );
-
+        
+            const curtidasPublicacao = curtidas.filter(
+                curtida => curtida.publicacao_id === publicacao.id
+            );
+        
             return {
                 ...publicacao,
                 usuarios: {
                     nome: autor?.nome || 'Usuário'
-                }
+                },
+                quantidadeCurtidas: curtidasPublicacao.length,
+                usuarioCurtiu: curtidasPublicacao.some(
+                    curtida => curtida.usuario_id === usuarioId
+                )
             };
         });
 
@@ -112,5 +135,63 @@ router.post('/feed', async (req, res) => {
         );
     }
 });
+router.post('/feed/:id/curtir', async (req, res) => {
+    if (!req.session.usuario || !req.session.accessToken) {
+        return res.redirect('/login');
+    }
 
+    const publicacaoId = Number(req.params.id);
+
+    if (!Number.isInteger(publicacaoId) || publicacaoId <= 0) {
+        return res.status(400).send('Publicação inválida.');
+    }
+
+    try {
+        const clienteUsuario = criarClienteUsuario(
+            req.session.accessToken
+        );
+
+        const usuarioId = req.session.usuario.id;
+
+        // Verifica se o usuário já curtiu
+        const { data: curtida, error: erroBusca } = await clienteUsuario
+            .from('curtidas')
+            .select('id')
+            .eq('publicacao_id', publicacaoId)
+            .eq('usuario_id', usuarioId)
+            .maybeSingle();
+
+        if (erroBusca) throw erroBusca;
+
+        if (curtida) {
+            // Se já curtiu, remove a curtida
+            const { error } = await clienteUsuario
+                .from('curtidas')
+                .delete()
+                .eq('id', curtida.id);
+
+            if (error) throw error;
+
+        } else {
+            // Se ainda não curtiu, registra
+            const { error } = await clienteUsuario
+                .from('curtidas')
+                .insert({
+                    publicacao_id: publicacaoId,
+                    usuario_id: usuarioId
+                });
+
+            if (error) throw error;
+        }
+
+        return res.redirect('/feed');
+
+    } catch (error) {
+        console.error('Erro ao curtir publicação:', error.message);
+
+        return res.status(500).send(
+            'Não foi possível atualizar a curtida.'
+        );
+    }
+});
 module.exports = router;

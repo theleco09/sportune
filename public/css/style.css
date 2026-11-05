@@ -112,96 +112,73 @@ h1, h2, h3, h4, h5 {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+
+/* ========================================
+   FEED SPORTUNE
+======================================== */
+
 .feed-container {
     max-width: 760px;
     margin: 0 auto;
 }
 
+/* Cabeçalho */
+
 .feed-intro {
-    margin-bottom: 24px;
-}
-
-.feed-intro p {
-    color: var(--texto-secundario);
-}
-
-.feed-form {
-    margin-bottom: 28px;
-}
-
-.feed-post {
-    margin-bottom: 16px;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.feed-post:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-}
-
-.feed-avatar {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: #1e3a5f;
-    color: var(--azul-claro);
-    font-weight: 800;
-}
-
-.feed-author {
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-.feed-meta {
-    color: var(--texto-secundario);
-    font-size: 0.8rem;
-}
-
-.feed-content {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    line-height: 1.65;
-}
-
-.feed-empty {
-    padding: 24px;
-    border: 1px dashed var(--borda);
-    border-radius: 12px;
-    color: var(--texto-secundario);
-    text-align: center;
-}
-.feed-intro {
-    padding: 24px 0;
+    padding: 28px 0;
     border-bottom: 1px solid var(--borda);
     margin-bottom: 28px;
 }
 
 .feed-intro h1 {
-    font-size: 1.8rem;
-    letter-spacing: -0.5px;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.7px;
 }
 
 .feed-intro p {
+    color: var(--texto-secundario);
     font-size: 0.95rem;
-    margin-top: 6px;
+    margin-top: 8px;
+}
+
+/* Formulário de publicação */
+.feed-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--azul-claro);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.feed-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--azul);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+}
+
+.feed-intro h1 span {
+    color: var(--azul-claro);
+}
+
+.feed-intro p {
+    max-width: 550px;
+    line-height: 1.7;
 }
 .feed-form {
+    margin-bottom: 32px;
     border: 1px solid #334766;
-    background: linear-gradient(
-        145deg,
-        #152238,
-        #111827
-    );
+    border-radius: 16px;
+    background: linear-gradient(145deg, #172943, #111827);
     overflow: hidden;
 }
 
 .feed-form .card-body {
-    padding: 22px !important;
+    padding: 24px !important;
 }
 
 .feed-form label {
@@ -211,15 +188,16 @@ h1, h2, h3, h4, h5 {
 
 .feed-form textarea {
     resize: vertical;
-    min-height: 95px;
-    line-height: 1.5;
+    min-height: 105px;
+    line-height: 1.6;
 }
 
 .feed-form textarea:focus {
     border-color: var(--azul);
 }
+
 .feed-form .btn-primary {
-    padding: 9px 22px;
+    padding: 9px 24px;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
@@ -227,14 +205,29 @@ h1, h2, h3, h4, h5 {
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
+
+/* Cabeçalho das publicações */
+
+.feed-meta {
+    color: var(--texto-secundario);
+    font-size: 0.8rem;
+    letter-spacing: 0.1px;
+}
+
+.feed-author {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Cards de publicação */
+
 .feed-post {
+    margin-bottom: 18px;
     border-radius: 16px;
     overflow: hidden;
-    background: linear-gradient(
-        145deg,
-        #141f31,
-        #111827
-    );
+    background: linear-gradient(145deg, #141f31, #111827);
+    transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .feed-post .card-body {
@@ -243,43 +236,62 @@ h1, h2, h3, h4, h5 {
 
 .feed-post:hover {
     border-color: var(--azul);
+    transform: translateY(-2px);
 }
+
+/* Avatar */
+
 .feed-avatar {
     width: 46px;
     height: 46px;
-    font-size: 1.1rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     border: 2px solid #355782;
-    background: linear-gradient(
-        145deg,
-        #1e40af,
-        #1e3a5f
-    );
+    background: linear-gradient(145deg, #1e40af, #1e3a5f);
+    color: var(--azul-claro);
+    font-size: 1.1rem;
+    font-weight: 800;
 }
-.feed-author {
-    font-size: 1rem;
-    margin-bottom: 4px;
-}
+
+/* Conteúdo */
+
 .feed-content {
-    font-size: 0.96rem;
-    color: #e2e8f0;
     padding-top: 8px;
+    color: #e2e8f0;
+    font-size: 0.96rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
-.feed-meta {
-    letter-spacing: 0.1px;
-}
+
+/* Feed vazio */
+
 .feed-empty {
-    background-color: var(--superficie);
     padding: 38px 20px;
+    border: 1px dashed var(--borda);
     border-radius: 16px;
+    background-color: var(--superficie);
+    color: var(--texto-secundario);
+    text-align: center;
 }
 
 .feed-empty p {
     color: var(--texto);
     font-weight: 600;
 }
+
+/* Responsividade */
+
 @media (max-width: 576px) {
+    .feed-container {
+        width: 100%;
+    }
+
     .feed-intro h1 {
-        font-size: 1.5rem;
+        font-size: 1.55rem;
     }
 
     .feed-form .card-body,
@@ -287,10 +299,12 @@ h1, h2, h3, h4, h5 {
         padding: 16px !important;
     }
 
-    .feed-container {
-        width: 100%;
+    .feed-avatar {
+        width: 42px;
+        height: 42px;
     }
 }
+
 /* ========================================
    PERFIS SPORTUNE
 ======================================== */
@@ -402,4 +416,63 @@ h1, h2, h3, h4, h5 {
     .perfil-secao {
         padding: 20px;
     }
+}
+
+/* Identidade dos cards */
+
+.feed-badge {
+    padding: 6px 10px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 6px;
+    background-color: rgba(59, 130, 246, 0.12);
+    color: var(--azul-claro);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.feed-divider {
+    height: 1px;
+    margin: 16px 0;
+    background: linear-gradient(
+        to right,
+        var(--borda),
+        transparent
+    );
+}
+/* CURTIDAS DO FEED */
+
+.feed-actions {
+    margin-top: 16px;
+}
+
+.feed-actions form {
+    display: inline-block;
+}
+
+.feed-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--texto-secundario);
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.feed-like:hover {
+    border-color: var(--azul);
+    color: var(--azul-claro);
+}
+
+.feed-like.liked {
+    border-color: rgba(59, 130, 246, .4);
+    background: rgba(59, 130, 246, .12);
+    color: var(--azul-claro);
 }

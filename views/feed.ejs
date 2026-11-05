@@ -22,9 +22,18 @@
         <section class="feed-container">
 
             <header class="feed-intro">
-                <h1 class="h3 mb-2">Feed esportivo</h1>
+                <span class="feed-label">
+                    <span class="feed-indicator"></span>
+                    COMUNIDADE SPORTUNE
+                </span>
+            
+                <h1 class="mt-3">
+                    O esporte conecta. <span>Sua jornada inspira.</span>
+                </h1>
+            
                 <p class="mb-0">
-                    Sua jornada, suas conquistas, seu esporte.
+                    Compartilhe conquistas, acompanhe atletas e faça parte
+                    de uma comunidade que vive o esporte.
                 </p>
             </header>
 
@@ -107,10 +116,27 @@
                                 </div>
                             </div>
 
-                            <span class="badge text-bg-primary">Sportune</span>
+                            <span class="feed-badge">SPORTUNE</span>
                         </div>
 
+                        <div class="feed-divider"></div>
+                        
                         <p class="feed-content mb-0"><%= publicacao.conteudo %></p>
+                        <div class="feed-actions">
+                            <% if (usuario) { %>
+                                <form action="/feed/<%= publicacao.id %>/curtir" method="POST">
+                                    <button type="submit" class="feed-like <%= publicacao.usuarioCurtiu ? 'liked' : '' %>">
+                                        <span><%= publicacao.usuarioCurtiu ? '♥' : '♡' %></span>
+                                        <%= publicacao.usuarioCurtiu ? 'Curtido' : 'Curtir' %>
+                                        · <%= publicacao.quantidadeCurtidas %>
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <a href="/login" class="feed-like">
+                                    ♡ Curtir · <%= publicacao.quantidadeCurtidas %>
+                                </a>
+                            <% } %>
+                        </div>
                     </div>
                 </article>
             <% }) %>
