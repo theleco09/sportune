@@ -158,7 +158,22 @@
                     
                         <% publicacao.comentarios.forEach(comentario => { %>
                             <div class="feed-comment">
-                                <strong><%= comentario.usuarios.nome %></strong>
+                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                    <strong><%= comentario.usuarios.nome %></strong>
+                            
+                                    <% if (usuario && usuario.id === comentario.usuario_id) { %>
+                                        <form
+                                            action="/feed/comentario/<%= comentario.id %>/excluir"
+                                            method="POST"
+                                            onsubmit="return confirm('Tem certeza que deseja excluir este comentário?');"
+                                        >
+                                            <button type="submit" class="feed-delete">
+                                                Excluir
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            
                                 <p><%= comentario.conteudo %></p>
                             </div>
                         <% }) %>

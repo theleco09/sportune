@@ -314,4 +314,47 @@ router.post('/feed/:id/excluir', async (req, res) => {
         );
     }
 });
+// Excluir comentário
+router.post('/feed/comentario/:id/excluir', async (req, res) => {
+    if (!req.session.usuario || !req.session.accessToken) {
+        return res.redirect('/login');
+    }
+
+    const comentarioId = Number(req.params.id);
+
+    if (!Number.isInteger(comentarioId) || comentarioId <= 0) {
+        return res.status(400).send('Comentário inválido.');
+    }
+
+    try {
+        const clienteUsuario = criarClienteUsuario(
+            req.session.accessToken
+        );
+
+        const { data, error } = await clienteUsuario
+            .from('comentarios')
+            .delete()
+            .eq('id', comentarioId)
+            .eq('usuario_id', req.session.usuario.id)
+            .select('id')
+            .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).send(
+                'Comentário não encontrado ou você não tem permissão para excluí-lo.'
+            );
+        }
+
+        return res.redirect('/feed');
+
+    } catch (error) {
+        console.error('Erro ao excluir comentário:', error.message);
+
+        return res.status(500).send(
+            'Não foi possível excluir o comentário.'
+        );
+    }
+});
 module.exports = router;
