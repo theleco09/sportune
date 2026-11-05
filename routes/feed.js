@@ -47,10 +47,27 @@ router.get('/feed', async (req, res) => {
         
             curtidas = data;
         }
+        // Buscar comentários das publicações
+let comentarios = [];
+
+if (idsPublicacoes.length > 0) {
+    const { data, error: erroComentarios } = await supabase
+        .from('comentarios')
+        .select('id, publicacao_id, usuario_id, conteudo, criado_em')
+        .in('publicacao_id', idsPublicacoes)
+        .order('criado_em', { ascending: true });
+
+    if (erroComentarios) throw erroComentarios;
+
+    comentarios = data;
+}
         
         const usuarioId = req.session.usuario?.id || null;
         const idsAutores = [
-            ...new Set(publicacoes.map(p => p.usuario_id))
+            ...new Set([
+                ...publicacoes.map(p => p.usuario_id),
+                ...comentarios.map(c => c.usuario_id)
+            ])
         ];
 
         let nomesAutores = [];
@@ -74,17 +91,33 @@ router.get('/feed', async (req, res) => {
                 curtida => curtida.publicacao_id === publicacao.id
             );
         
-            return {
-                ...publicacao,
-                usuarios: {
-                    nome: autor?.nome || 'Usuário'
-                },
-                quantidadeCurtidas: curtidasPublicacao.length,
-                usuarioCurtiu: curtidasPublicacao.some(
-                    curtida => curtida.usuario_id === usuarioId
-                )
-            };
-        });
+            const comentariosPublicacao = comentarios
+            .filter(c => c.publicacao_id === publicacao.id)
+            .map(comentario => {
+                const autorComentario = nomesAutores.find(
+                    usuario => usuario.id === comentario.usuario_id
+                );
+        
+                return {
+                    ...comentario,
+                    usuarios: {
+                        nome: autorComentario?.nome || 'Usuário'
+                    }
+                };
+            });
+        
+        return {
+            ...publicacao,
+            usuarios: {
+                nome: autor?.nome || 'Usuário'
+            },
+            quantidadeCurtidas: curtidasPublicacao.length,
+            usuarioCurtiu: curtidasPublicacao.some(
+                curtida => curtida.usuario_id === usuarioId
+            ),
+            comentarios: comentariosPublicacao
+        };
+    });
 
         res.render('feed', {
             publicacoes: publicacoesComAutores,
@@ -191,6 +224,50 @@ router.post('/feed/:id/curtir', async (req, res) => {
 
         return res.status(500).send(
             'Não foi possível atualizar a curtida.'
+        );
+    }
+});
+// Criar comentário
+router.post('/feed/:id/comentar', async (req, res) => {
+    if (!req.session.usuario || !req.session.accessToken) {
+        return res.redirect('/login');
+    }
+
+    const publicacaoId = Number(req.params.id);
+    const conteudo = req.body.conteudo?.trim();
+
+    if (!Number.isInteger(publicacaoId) || publicacaoId <= 0) {
+        return res.status(400).send('Publicação inválida.');
+    }
+
+    if (!conteudo || conteudo.length > 500) {
+        return res.status(400).send(
+            'O comentário deve ter entre 1 e 500 caracteres.'
+        );
+    }
+
+    try {
+        const clienteUsuario = criarClienteUsuario(
+            req.session.accessToken
+        );
+
+        const { error } = await clienteUsuario
+            .from('comentarios')
+            .insert({
+                publicacao_id: publicacaoId,
+                usuario_id: req.session.usuario.id,
+                conteudo
+            });
+
+        if (error) throw error;
+
+        return res.redirect('/feed');
+
+    } catch (error) {
+        console.error('Erro ao criar comentário:', error.message);
+
+        return res.status(500).send(
+            'Não foi possível enviar o comentário.'
         );
     }
 });

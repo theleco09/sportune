@@ -138,6 +138,38 @@
                             <% } %>
                         </div>
                     </div>
+                    <div class="feed-comments">
+
+                        <h4>Comentários (<%= publicacao.comentarios.length %>)</h4>
+                    
+                        <% publicacao.comentarios.forEach(comentario => { %>
+                            <div class="feed-comment">
+                                <strong><%= comentario.usuarios.nome %></strong>
+                                <p><%= comentario.conteudo %></p>
+                            </div>
+                        <% }) %>
+                    
+                        <% if (usuario) { %>
+                            <form
+                                action="/feed/<%= publicacao.id %>/comentar"
+                                method="POST"
+                                class="feed-comment-form"
+                            >
+                                <input
+                                    type="text"
+                                    name="conteudo"
+                                    placeholder="Escreva um comentário..."
+                                    maxlength="500"
+                                    required
+                                >
+                    
+                                <button type="submit">Enviar</button>
+                            </form>
+                        <% } else { %>
+                            <a href="/login">Entre para comentar</a>
+                        <% } %>
+                    
+                    </div>
                 </article>
             <% }) %>
 
