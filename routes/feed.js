@@ -271,4 +271,47 @@ router.post('/feed/:id/comentar', async (req, res) => {
         );
     }
 });
+// Excluir publicação
+router.post('/feed/:id/excluir', async (req, res) => {
+    if (!req.session.usuario || !req.session.accessToken) {
+        return res.redirect('/login');
+    }
+
+    const publicacaoId = Number(req.params.id);
+
+    if (!Number.isInteger(publicacaoId) || publicacaoId <= 0) {
+        return res.status(400).send('Publicação inválida.');
+    }
+
+    try {
+        const clienteUsuario = criarClienteUsuario(
+            req.session.accessToken
+        );
+
+        const { data, error } = await clienteUsuario
+            .from('publicacoes')
+            .delete()
+            .eq('id', publicacaoId)
+            .eq('usuario_id', req.session.usuario.id)
+            .select('id')
+            .maybeSingle();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).send(
+                'Publicação não encontrada ou você não tem permissão para excluí-la.'
+            );
+        }
+
+        return res.redirect('/feed');
+
+    } catch (error) {
+        console.error('Erro ao excluir publicação:', error.message);
+
+        return res.status(500).send(
+            'Não foi possível excluir a publicação.'
+        );
+    }
+});
 module.exports = router;

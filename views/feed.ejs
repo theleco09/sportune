@@ -116,7 +116,21 @@
                                 </div>
                             </div>
 
-                            <span class="feed-badge">SPORTUNE</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="feed-badge">SPORTUNE</span>
+                            
+                                <% if (usuario && usuario.id === publicacao.usuario_id) { %>
+                                    <form
+                                        action="/feed/<%= publicacao.id %>/excluir"
+                                        method="POST"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir esta publicação?');"
+                                    >
+                                        <button type="submit" class="feed-delete">
+                                            Excluir
+                                        </button>
+                                    </form>
+                                <% } %>
+                            </div>
                         </div>
 
                         <div class="feed-divider"></div>

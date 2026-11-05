@@ -558,3 +558,19 @@ h1, h2, h3, h4, h5 {
         padding: 11px;
     }
 }
+/* Botão de excluir publicação */
+.feed-delete {
+    background: transparent;
+    border: 1px solid #a94444;
+    color: #ff7777;
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.feed-delete:hover {
+    background: #a94444;
+    color: #fff;
+}
