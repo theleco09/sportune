@@ -24,11 +24,13 @@ const authRouter = require('./routes/auth');
 const atletasRouter = require('./routes/atletas');
 const treinadoresRouter = require('./routes/treinadores');
 const feedRouter = require('./routes/feed');
+const apiRouter = require('./routes/api');
 app.use('/', indexRouter);
 app.use('/', authRouter);
 app.use('/', atletasRouter);
 app.use('/', treinadoresRouter);
 app.use('/', feedRouter);
+app.use('/api', apiRouter);
 
 
 app.listen(PORT, () => {
