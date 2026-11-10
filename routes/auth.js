@@ -1,10 +1,30 @@
 require('dotenv').config();
-
+const multer = require('multer');
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 
 const router = express.Router();
+const upload = multer({
+    storage: multer.memoryStorage(),
 
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    },
+
+    fileFilter: (req, file, callback) => {
+        const tiposPermitidos = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        if (tiposPermitidos.includes(file.mimetype)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Formato de imagem não permitido.'));
+        }
+    }
+});
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 
@@ -72,64 +92,121 @@ router.get('/perfil/editar', verificarLogin, (req, res) => {
     });
 });
 
-router.post('/perfil/editar', verificarLogin, async (req, res) => {
-    const { nome, esporte, pais, experiencia, bio } = req.body;
-    const usuario = req.session.usuario;
-    const tipo = req.session.tipo;
-    const clienteUsuario = criarClienteUsuario(req.session.accessToken);
 
-    if (!nome || !esporte || !pais ||
-        (tipo === 'treinador' && !experiencia)) {
-        return res.render('editar-perfil', {
-            usuario,
-            tipo,
-            erro: 'Preencha todos os campos obrigatórios.'
-        });
+router.post(
+    '/perfil/editar',
+    verificarLogin,
+    upload.single('foto_perfil'),
+    async (req, res) => {
+        const { nome, esporte, pais, experiencia, bio } = req.body;
+        const usuario = req.session.usuario;
+        const tipo = req.session.tipo;
+        const clienteUsuario = criarClienteUsuario(req.session.accessToken);
+
+        if (!nome || !esporte || !pais ||
+            (tipo === 'treinador' && !experiencia)) {
+            return res.render('editar-perfil', {
+                usuario,
+                tipo,
+                erro: 'Preencha todos os campos obrigatórios.'
+            });
+        }
+
+        try {
+            let fotoPerfil = usuario.foto_perfil || null;
+
+            // Enviar a nova foto ao Storage, caso tenha sido selecionada
+            if (req.file) {
+                const extensoes = {
+                    'image/jpeg': 'jpg',
+                    'image/png': 'png',
+                    'image/webp': 'webp'
+                };
+
+                const extensao = extensoes[req.file.mimetype];
+
+                const caminhoArquivo =
+                    `${usuario.id}/avatar-${Date.now()}.${extensao}`;
+
+                const { error: erroUpload } = await clienteUsuario
+                    .storage
+                    .from('midias-perfil')
+                    .upload(caminhoArquivo, req.file.buffer, {
+                        contentType: req.file.mimetype,
+                        upsert: false
+                    });
+
+                if (erroUpload) throw erroUpload;
+
+                const { data } = clienteUsuario
+                    .storage
+                    .from('midias-perfil')
+                    .getPublicUrl(caminhoArquivo);
+
+                fotoPerfil = data.publicUrl;
+            }
+
+            // Atualizar os dados principais do usuário
+            const { error: erroUsuario } = await clienteUsuario
+                .from('usuarios')
+                .update({
+                    nome,
+                    pais,
+                    bio,
+                    foto_perfil: fotoPerfil
+                })
+                .eq('id', usuario.id);
+
+            if (erroUsuario) throw erroUsuario;
+
+            // Atualizar os dados específicos do perfil
+            const tabelaPerfil = tipo === 'atleta'
+                ? 'atletas'
+                : 'treinadores';
+
+            const dadosPerfil = tipo === 'atleta'
+                ? { esporte }
+                : { esporte, experiencia };
+
+            const { error: erroPerfil } = await clienteUsuario
+                .from(tabelaPerfil)
+                .update(dadosPerfil)
+                .eq('usuario_id', usuario.id);
+
+            if (erroPerfil) throw erroPerfil;
+
+            // Atualizar os dados da sessão
+            req.session.usuario = {
+                ...usuario,
+                nome,
+                pais,
+                bio,
+                foto_perfil: fotoPerfil,
+                esporte,
+                ...(tipo === 'treinador' ? { experiencia } : {})
+            };
+
+            res.redirect('/perfil');
+
+        } catch (error) {
+            console.error('Erro ao editar perfil:', error);
+
+            res.render('editar-perfil', {
+                usuario: {
+                    ...usuario,
+                    nome,
+                    pais,
+                    bio,
+                    esporte,
+                    ...(tipo === 'treinador' ? { experiencia } : {})
+                },
+                tipo,
+                erro: 'Não foi possível atualizar o perfil.'
+            });
+        }
     }
+);
 
-    try {
-        const { error: erroUsuario } = await clienteUsuario
-            .from('usuarios')
-            .update({ nome, pais, bio })
-            .eq('id', usuario.id);
-
-        if (erroUsuario) throw erroUsuario;
-
-        const tabelaPerfil = tipo === 'atleta'
-            ? 'atletas'
-            : 'treinadores';
-
-        const dadosPerfil = tipo === 'atleta'
-            ? { esporte }
-            : { esporte, experiencia };
-
-        const { error: erroPerfil } = await clienteUsuario
-            .from(tabelaPerfil)
-            .update(dadosPerfil)
-            .eq('usuario_id', usuario.id);
-
-        if (erroPerfil) throw erroPerfil;
-
-        req.session.usuario = {
-            ...usuario,
-            nome,
-            pais,
-            bio,
-            esporte,
-            ...(tipo === 'treinador' ? { experiencia } : {})
-        };
-
-        res.redirect('/perfil');
-    } catch (error) {
-        console.error('Erro ao editar perfil:', error.message);
-
-        res.render('editar-perfil', {
-            usuario,
-            tipo,
-            erro: 'Não foi possível atualizar o perfil.'
-        });
-    }
-});
 
 router.post('/login', async (req, res) => {
     const { email, senha } = req.body;

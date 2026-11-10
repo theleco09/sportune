@@ -26,7 +26,14 @@
             <div class="perfil-identificacao">
 
                 <div class="perfil-avatar">
-                    <%= atleta.nome.charAt(0).toUpperCase() %>
+                    <% if (atleta.foto_perfil) { %>
+                        <img
+                            src="<%= atleta.foto_perfil %>"
+                            alt="Foto de perfil de <%= atleta.nome %>"
+                        >
+                    <% } else { %>
+                        <%= atleta.nome.charAt(0).toUpperCase() %>
+                    <% } %>
                 </div>
 
                 <div>

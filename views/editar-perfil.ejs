@@ -27,8 +27,34 @@
             </div>
         <% } %>
 
-        <form action="/perfil/editar" method="POST">
-
+        <form action="/perfil/editar" method="POST" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label class="form-label">Foto de perfil</label>
+            
+                <% if (usuario.foto_perfil) { %>
+                    <div class="mb-3">
+                        <img
+                            src="<%= usuario.foto_perfil %>"
+                            alt="Foto de perfil atual"
+                            class="rounded-circle"
+                            width="120"
+                            height="120"
+                            style="object-fit: cover;"
+                        >
+                    </div>
+                <% } %>
+            
+                <input
+                    type="file"
+                    name="foto_perfil"
+                    class="form-control"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+            
+                <small class="text-muted">
+                    Escolha uma imagem JPG, PNG ou WEBP.
+                </small>
+            </div>
             <div class="mb-3">
                 <label class="form-label">Nome</label>
                 <input
