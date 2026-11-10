@@ -664,3 +664,71 @@ h1, h2, h3, h4, h5 {
 .feed-profile-name:hover {
     color: #60a5fa;
 }
+/* CONEXÕES DO PERFIL */
+
+.perfil-conexoes {
+    display: flex;
+    gap: 25px;
+    margin-top: 22px;
+}
+
+.perfil-conexoes div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.perfil-conexoes strong {
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.perfil-conexoes span {
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+}
+
+.perfil-seguir-form {
+    margin-top: 20px;
+}
+
+.perfil-seguir-btn {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.perfil-seguir-btn:hover {
+    background: #1d4ed8;
+}
+/* Botão de seguir */
+.perfil-seguir-btn {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.perfil-seguir-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Botão quando já está seguindo */
+.perfil-seguir-btn.seguindo {
+    background: #374151;
+    color: #ef4444;
+}
+
+.perfil-seguir-btn.seguindo:hover {
+    background: #4b5563;
+    color: #ef4444;
+}

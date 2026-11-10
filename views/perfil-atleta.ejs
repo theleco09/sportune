@@ -59,6 +59,39 @@
             </div>
 
         </section>
+        <!-- Informações de seguidores -->
+<div class="perfil-conexoes">
+
+    <div>
+        <strong><%= quantidadeSeguidores %></strong>
+        <span>Seguidores</span>
+    </div>
+
+    <div>
+        <strong><%= quantidadeSeguindo %></strong>
+        <span>Seguindo</span>
+    </div>
+
+</div>
+
+<!-- Botão de seguir -->
+<% if (usuario && !ehMeuPerfil) { %>
+
+    <form
+        action="/seguidores/<%= atleta.id %>/alternar"
+        method="POST"
+        class="perfil-seguir-form"
+    >
+    <button
+    type="submit"
+    class="perfil-seguir-btn <%= usuarioSegueAtleta ? 'seguindo' : '' %>"
+>
+    <%= usuarioSegueAtleta ? 'Deixar de seguir' : 'Seguir' %>
+</button>
+    </form>
+
+<% } %>
+        
 
         <!-- Biografia -->
         <section class="perfil-secao">
