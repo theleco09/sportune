@@ -70,20 +70,20 @@ if (idsPublicacoes.length > 0) {
             ])
         ];
 
-        let nomesAutores = [];
+        let dadosAutores = [];
 
-        if (idsAutores.length > 0) {
-            const { data, error: erroAutores } = await supabase
-                .rpc('buscar_nomes_autores', {
-                    p_ids: idsAutores
-                });
+if (idsAutores.length > 0) {
+    const { data, error: erroAutores } = await supabase
+        .rpc('buscar_dados_autores', {
+            p_ids: idsAutores
+        });
 
-            if (erroAutores) throw erroAutores;
+    if (erroAutores) throw erroAutores;
 
-            nomesAutores = data;
-        }
+    dadosAutores = data;
+}
         const publicacoesComAutores = publicacoes.map(publicacao => {
-            const autor = nomesAutores.find(
+            const autor = dadosAutores.find(
                 usuario => usuario.id === publicacao.usuario_id
             );
         
@@ -94,14 +94,21 @@ if (idsPublicacoes.length > 0) {
             const comentariosPublicacao = comentarios
             .filter(c => c.publicacao_id === publicacao.id)
             .map(comentario => {
-                const autorComentario = nomesAutores.find(
+                const autorComentario = dadosAutores.find(
                     usuario => usuario.id === comentario.usuario_id
                 );
         
                 return {
                     ...comentario,
                     usuarios: {
-                        nome: autorComentario?.nome || 'Usuário'
+                        nome: autorComentario?.nome || 'Usuário',
+                        foto_perfil: autorComentario?.foto_perfil || null,
+                        tipo: autorComentario?.tipo || null,
+                        perfilUrl: autorComentario?.tipo === 'atleta'
+                        ? `/atletas/${autorComentario.id}`
+                        : autorComentario?.tipo === 'treinador'
+                            ? `/treinadores/${autorComentario.id}`
+                            : null
                     }
                 };
             });
@@ -109,7 +116,14 @@ if (idsPublicacoes.length > 0) {
         return {
             ...publicacao,
             usuarios: {
-                nome: autor?.nome || 'Usuário'
+                nome: autor?.nome || 'Usuário',
+                foto_perfil: autor?.foto_perfil || null,
+                tipo: autor?.tipo || null,
+                perfilUrl: autor?.tipo === 'atleta'
+                 ? `/atletas/${autor.id}`
+                : autor?.tipo === 'treinador'
+                 ? `/treinadores/${autor.id}`
+                    : null
             },
             quantidadeCurtidas: curtidasPublicacao.length,
             usuarioCurtiu: curtidasPublicacao.some(

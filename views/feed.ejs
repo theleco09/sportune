@@ -99,16 +99,26 @@
                 <article class="card feed-post">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center gap-3 mb-3">
-
-                            <div class="feed-avatar">
-                                <%= (publicacao.usuarios?.nome || 'A')
-                                    .trim().charAt(0).toUpperCase() %>
-                            </div>
-
+                            <a href="<%= publicacao.usuarios.perfilUrl %>" class="feed-profile-link">
+                                <div class="feed-avatar">
+                                    <% if (publicacao.usuarios.foto_perfil) { %>
+                                        <img
+                                            src="<%= publicacao.usuarios.foto_perfil %>"
+                                            alt="Foto de perfil"
+                                        >
+                                    <% } else { %>
+                                        <%= (publicacao.usuarios?.nome || 'A')
+                                            .trim().charAt(0).toUpperCase() %>
+                                    <% } %>
+                                </div>
+                            </a>
+                        
                             <div class="flex-grow-1">
-                                <h3 class="feed-author">
-                                    <%= publicacao.usuarios?.nome || 'Atleta' %>
-                                </h3>
+                                <a href="<%= publicacao.usuarios.perfilUrl %>" class="feed-profile-name">
+                                    <h3 class="feed-author">
+                                        <%= publicacao.usuarios?.nome || 'Atleta' %>
+                                    </h3>
+                                </a>
 
                                 <div class="feed-meta">
                                     <%= new Date(publicacao.criado_em)
@@ -159,7 +169,28 @@
                         <% publicacao.comentarios.forEach(comentario => { %>
                             <div class="feed-comment">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <strong><%= comentario.usuarios.nome %></strong>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                
+                                        <a href="<%= comentario.usuarios.perfilUrl %>" class="feed-profile-link">
+                                            <div class="feed-comment-avatar">
+                                                <% if (comentario.usuarios.foto_perfil) { %>
+                                                    <img
+                                                        src="<%= comentario.usuarios.foto_perfil %>"
+                                                        alt="Foto de perfil"
+                                                    >
+                                                <% } else { %>
+                                                    <%= (comentario.usuarios.nome || 'U')
+                                                        .trim().charAt(0).toUpperCase() %>
+                                                <% } %>
+                                            </div>
+                                        </a>
+                                
+                                        <a href="<%= comentario.usuarios.perfilUrl %>" class="feed-profile-name">
+                                            <strong><%= comentario.usuarios.nome %></strong>
+                                        </a>
+                                
+                                    </div>
                             
                                     <% if (usuario && usuario.id === comentario.usuario_id) { %>
                                         <form
